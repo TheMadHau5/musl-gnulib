@@ -100,13 +100,14 @@
 
 /* Don't do the contents of this file more than once.  */
 
+#include <stdarg.h>
 #ifndef _OBSTACK_H
 #define _OBSTACK_H 1
 
 /* This file uses _Noreturn, _GL_ATTRIBUTE_PURE.  */
-#if !_GL_CONFIG_H_INCLUDED
- #error "Please include config.h first."
-#endif
+// #if !_GL_CONFIG_H_INCLUDED
+//  #error "Please include config.h first."
+// #endif
 
 #ifndef _OBSTACK_INTERFACE_VERSION
 # define _OBSTACK_INTERFACE_VERSION 2
@@ -152,7 +153,7 @@
                 P, A)
 
 #ifndef __attribute_pure__
-# define __attribute_pure__ _GL_ATTRIBUTE_PURE
+# define __attribute_pure__ __attribute__ ((__pure__))
 #endif
 
 /* Not the same as _Noreturn, since it also works with function pointers.  */
@@ -212,7 +213,7 @@ struct obstack          /* control current object in current chunk */
                                      compatibility.  */
 };
 
-/* Declare the external functions we use; they are in obstack.c.  */
+/* Declare the external functions we use; they are in obstack.c and obstack_printf.c.  */
 
 extern void _obstack_newchunk (struct obstack *, _OBSTACK_SIZE_T);
 extern void _obstack_free (struct obstack *, void *);
@@ -226,6 +227,10 @@ extern int _obstack_begin_1 (struct obstack *,
 extern _OBSTACK_SIZE_T _obstack_memory_used (struct obstack *)
   __attribute_pure__;
 
+int
+obstack_printf (struct obstack *obs, const char *format, ...);
+int
+obstack_vprintf (struct obstack *obs, const char *format, va_list args);
 
 /* Error handler called when 'obstack_chunk_alloc' failed to allocate
    more memory.  This can be set to a user defined function which

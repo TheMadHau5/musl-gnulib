@@ -14,13 +14,13 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
-#include <config.h>
+// #include <config.h>
 
 /* Specification.  */
 #include <stdio.h>
 
 #include "obstack.h"
-#include "vasnprintf.h"
+// #include "vasnprintf.h"
 
 #include <errno.h>
 #include <stdarg.h>
@@ -61,31 +61,28 @@ obstack_vprintf (struct obstack *obs, const char *format, va_list args)
   char buf[CUTOFF];
   char *base = obstack_next_free (obs);
   size_t len = obstack_room (obs);
-  char *str;
 
   if (len < CUTOFF)
     {
       base = buf;
       len = CUTOFF;
     }
-  str = vasnprintf (base, &len, format, args);
-  if (!str)
+  len = vsnprintf (base, len, format, args);
+  if (len < 0)
     {
       if (errno == ENOMEM)
         obstack_alloc_failed_handler ();
       return -1;
     }
-  if (str == base && str != buf)
+  if (base != buf)
     /* The output was already computed in place, but we need to
        account for its size.  */
     obstack_blank_fast (obs, len);
   else
     {
-      /* The output exceeded available obstack space or we used buf;
+      /* We used buf;
          copy the resulting string.  */
-      obstack_grow (obs, str, len);
-      if (str != buf)
-        free (str);
+      obstack_grow (obs, base, len);
     }
   return len;
 }
