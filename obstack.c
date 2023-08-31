@@ -893,7 +893,6 @@ void (*obstack_alloc_failed_handler) (void) = print_and_abort;
 #include <stdarg.h>
 #include <stdio.h>
 #include <strings.h>
-#include "obstack.h"
 
 int obstack_printf(struct obstack *obstack, const char *__restrict fmt, ...)
 {
